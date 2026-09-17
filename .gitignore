@@ -1,0 +1,20 @@
+﻿# Local registry backups
+backups/
+
+# Local script backups
+*.bak
+*.original
+
+# PowerShell
+*.tmp
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Logs
+*.log
