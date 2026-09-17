@@ -1,4 +1,4 @@
-﻿# Edge Optimizer
+# Edge Optimizer
 
 [![PowerShell Check](https://github.com/Dexin-Y06/edge-optimizer/actions/workflows/powershell.yml/badge.svg)](https://github.com/Dexin-Y06/edge-optimizer/actions/workflows/powershell.yml)
 [![Release](https://img.shields.io/github/v/release/Dexin-Y06/edge-optimizer)](https://github.com/Dexin-Y06/edge-optimizer/releases)
@@ -40,95 +40,125 @@ Clone the repository:
 ```powershell
 git clone https://github.com/Dexin-Y06/edge-optimizer.git
 cd edge-optimizer
+```
 
 Install the optimization:
 
+```powershell
 .\setup.ps1 install
+```
 
 The installation process creates a backup of the existing Edge policies before applying the configured policies.
 
 After installation, restart Microsoft Edge if necessary and verify the policies with:
 
+```powershell
 .\setup.ps1 check
-Commands
-CommandDescription
-installBack up existing policies and apply the optimization
-backupCreate a backup of the current Edge policies
-restoreRestore the most recent backup
-checkCheck the current policy values
-helpDisplay command help
+```
+
+## Commands
+
+| Command | Description |
+|---|---|
+| `install` | Back up existing policies and apply the optimization |
+| `backup` | Create a backup of the current Edge policies |
+| `restore` | Restore the most recent backup |
+| `check` | Check the current policy values |
+| `help` | Display command help |
 
 Examples:
 
+```powershell
 .\setup.ps1 install
 .\setup.ps1 check
 .\setup.ps1 backup
 .\setup.ps1 restore
 .\setup.ps1 help
-Default Policies
-PolicyValuePurpose
-StartupBoostEnabled0Disable Startup Boost
-BackgroundModeEnabled0Disable background mode
-LaunchEdgeOnWindowsStartupEnabled0Disable automatic startup
-SleepingTabsEnabled1Enable Sleeping Tabs
-SleepingTabsTimeout15Set the Sleeping Tabs timeout
-AutoDiscardSleepingTabsEnabled1Enable automatic sleeping/discarding
+```
+
+## Default Policies
+
+| Policy | Value | Purpose |
+|---|---:|---|
+| `StartupBoostEnabled` | `0` | Disable Startup Boost |
+| `BackgroundModeEnabled` | `0` | Disable background mode |
+| `LaunchEdgeOnWindowsStartupEnabled` | `0` | Disable automatic startup |
+| `SleepingTabsEnabled` | `1` | Enable Sleeping Tabs |
+| `SleepingTabsTimeout` | `15` | Set the Sleeping Tabs timeout |
+| `AutoDiscardSleepingTabsEnabled` | `1` | Enable automatic sleeping/discarding |
 
 Policies are written to:
 
+```text
 HKLM\SOFTWARE\Policies\Microsoft\Edge
-Verification
+```
+
+## Verification
 
 You can verify the configuration in three ways.
 
-1. Script check
+### 1. Script check
+
+```powershell
 .\setup.ps1 check
+```
 
 The command compares the current Registry values with the target configuration.
 
-2. Edge policy page
+### 2. Edge policy page
 
 Open the following page in Microsoft Edge:
 
+```text
 edge://policy
+```
 
-Select Reload policies and check the relevant policies.
+Select **Reload policies** and check the relevant policies.
 
-3. Edge performance settings
+### 3. Edge performance settings
 
 Open:
 
+```text
 edge://settings/performance
+```
 
 Review the Sleeping Tabs settings.
 
-Backup and Restore
+## Backup and Restore
 
-Before applying changes, the install command automatically creates a timestamped backup of the existing Edge policies.
+Before applying changes, the `install` command automatically creates a timestamped backup of the existing Edge policies.
 
 Backups are stored locally in:
 
+```text
 backups/
+```
 
-The backups/ directory is excluded from Git through .gitignore and is not uploaded to the repository.
+The `backups/` directory is excluded from Git through `.gitignore` and is not uploaded to the repository.
 
 To restore the most recent backup:
 
+```powershell
 .\setup.ps1 restore
-Safety
+```
+
+## Safety
 
 This project modifies Microsoft Edge policies in the Windows Registry.
 
-Review the policies before applying them.
-The install command creates a backup before changing policies.
-The restore command can restore the most recent backup.
-Administrator privileges are required for installation and restoration.
+- Review the policies before applying them.
+- The `install` command creates a backup before changing policies.
+- The `restore` command can restore the most recent backup.
+- Administrator privileges are required for installation and restoration.
 
 Use this tool at your own discretion.
 
 This project is not affiliated with or endorsed by Microsoft.
 
-Project Structure
+## Project Structure
+
+```text
 edge-optimizer/
 ├── .github/
 │   └── workflows/
@@ -139,20 +169,23 @@ edge-optimizer/
 ├── LICENSE
 ├── README.md
 └── setup.ps1
-Continuous Integration
+```
 
-Every push to main and every pull request targeting main runs the PowerShell Check workflow.
+## Continuous Integration
+
+Every push to `main` and every pull request targeting `main` runs the **PowerShell Check** workflow.
 
 The workflow:
 
-Parses setup.ps1 for PowerShell syntax errors.
-Runs PSScriptAnalyzer with error-level checks.
-Release
+1. Parses `setup.ps1` for PowerShell syntax errors.
+2. Runs PSScriptAnalyzer with error-level checks.
 
-The current stable release is v1.0.0.
+## Release
 
-See the Releases page for version history and release notes.
+The current stable release is **v1.0.0**.
 
-License
+See the [Releases](https://github.com/Dexin-Y06/edge-optimizer/releases) page for version history and release notes.
 
-MIT License. See LICENSE.
+## License
+
+MIT License. See [LICENSE](LICENSE).
