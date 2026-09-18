@@ -1211,6 +1211,25 @@ try {
 
         "restore" {
 
+            if ($WhatIf) {
+
+                Write-Host ""
+                Write-Host "Microsoft Edge Windows 11 优化恢复预览"
+                Write-Host "========================================"
+                Write-Host "以下操作将在实际 restore 时执行："
+                Write-Host "  1. 检查管理员权限"
+                Write-Host "  2. 关闭 Microsoft Edge"
+                Write-Host "  3. 恢复最近一次 Registry 备份"
+                Write-Host ""
+                Write-Host "预览模式不会执行以下操作："
+                Write-Host "  - 不关闭 Edge"
+                Write-Host "  - 不修改 Registry"
+                Write-Host ""
+                Write-Ok "WhatIf 预览完成，系统未发生修改。"
+
+                return
+            }
+
             if (-not (Test-IsAdministrator)) {
 
                 throw "restore 需要管理员 PowerShell。请右键 PowerShell -> 以管理员身份运行。"
