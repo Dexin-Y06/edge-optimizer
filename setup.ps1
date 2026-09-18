@@ -577,10 +577,18 @@ function Restore-Registry {
 
         Write-Info "正在恢复 HKLM Edge Policy..."
 
-        & reg.exe import $meta.HKLMFile 2>&1 | Out-Null
+        $regProcess = Start-Process `
+            -FilePath "reg.exe" `
+            -ArgumentList @(
+                "import",
+                ('"{0}"' -f $meta.HKLMFile)
+            ) `
+            -Wait `
+            -PassThru `
+            -NoNewWindow
 
-        if ($LASTEXITCODE -ne 0) {
-            throw "HKLM Edge Policy 恢复失败，reg.exe 返回代码：$LASTEXITCODE"
+        if ($regProcess.ExitCode -ne 0) {
+            throw "HKLM Edge Policy 恢复失败，reg.exe 返回代码：$($regProcess.ExitCode)"
         }
 
         Write-Ok "HKLM Edge Policy 已恢复。"
@@ -619,10 +627,18 @@ function Restore-Registry {
 
         Write-Info "正在恢复 HKCU Edge Policy..."
 
-        & reg.exe import $meta.HKCUFile 2>&1 | Out-Null
+        $regProcess = Start-Process `
+            -FilePath "reg.exe" `
+            -ArgumentList @(
+                "import",
+                ('"{0}"' -f $meta.HKCUFile)
+            ) `
+            -Wait `
+            -PassThru `
+            -NoNewWindow
 
-        if ($LASTEXITCODE -ne 0) {
-            throw "HKCU Edge Policy 恢复失败，reg.exe 返回代码：$LASTEXITCODE"
+        if ($regProcess.ExitCode -ne 0) {
+            throw "HKCU Edge Policy 恢复失败，reg.exe 返回代码：$($regProcess.ExitCode)"
         }
 
         Write-Ok "HKCU Edge Policy 已恢复。"
