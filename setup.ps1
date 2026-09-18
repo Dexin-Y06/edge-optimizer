@@ -168,7 +168,7 @@ function Close-Edge {
     }
     else {
 
-        Write-Warn "已选择不关闭 Edge。安装可能无法立即生效，请稍后重启 Edge。"
+        throw "用户选择不关闭 Edge，操作已取消。"
     }
 }
 
@@ -267,8 +267,14 @@ function Backup-Registry {
     Ensure-Directory
 
     $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-
     $backupDir = Join-Path $BackupRoot $timestamp
+
+    $index = 1
+
+    while (Test-Path -LiteralPath $backupDir) {
+        $backupDir = Join-Path $BackupRoot "$timestamp-$index"
+        $index++
+    }
 
     New-Item `
         -Path $backupDir `
@@ -363,31 +369,44 @@ function Save-PolicyState {
     $state = [ordered]@{
         Version   = "1.1.0"
         Timestamp = (Get-Date).ToString("o")
-        Policies  = [ordered]@{}
+        Policies  = [ordered]@{
+            HKLM = [ordered]@{}
+            HKCU = [ordered]@{}
+        }
     }
 
     foreach ($name in $Policies.Keys) {
 
-        $exists = $false
-        $value = $null
+        foreach ($scope in @("HKLM", "HKCU")) {
 
-        if (Test-Path -LiteralPath $HklmKey) {
-
-            $property = Get-ItemProperty `
-                -LiteralPath $HklmKey `
-                -Name $name `
-                -ErrorAction SilentlyContinue
-
-            if ($null -ne $property) {
-
-                $exists = $true
-                $value = $property.$name
+            $keyPath = if ($scope -eq "HKLM") {
+                $HklmKey
             }
-        }
+            else {
+                $HkcuKey
+            }
 
-        $state.Policies[$name] = [ordered]@{
-            Exists = $exists
-            Value  = $value
+            $exists = $false
+            $value = $null
+
+            if (Test-Path -LiteralPath $keyPath) {
+
+                $property = Get-ItemProperty `
+                    -LiteralPath $keyPath `
+                    -Name $name `
+                    -ErrorAction SilentlyContinue
+
+                if ($null -ne $property) {
+
+                    $exists = $true
+                    $value = $property.$name
+                }
+            }
+
+            $state.Policies[$scope][$name] = [ordered]@{
+                Exists = $exists
+                Value  = $value
+            }
         }
     }
 
@@ -770,7 +789,7 @@ function Uninstall-EdgeOptimizer {
 
     foreach ($name in $Policies.Keys) {
 
-        $saved = $state.Policies.$name
+        $saved = $state.Policies.HKLM.$name
 
         if ($null -eq $saved) {
             $skipped += [pscustomobject]@{
@@ -1034,6 +1053,12 @@ function Status-Policies {
         $current = Get-PolicyValue `
             -Path $HklmKey `
             -Name $name
+
+        if ($null -eq $current) {
+            $current = Get-PolicyValue `
+                -Path $HkcuKey `
+                -Name $name
+        }
 
         if ($null -eq $current) {
 
